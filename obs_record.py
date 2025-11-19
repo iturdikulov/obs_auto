@@ -14,44 +14,33 @@ from time import sleep, time
 import psutil
 
 import obsws_python as obs
-
-from PyQt6.QtWidgets import (
-    QApplication,
-    QWidget,
-    QVBoxLayout,
-    QLineEdit,
-    QLabel,
-)
+import tkinter as tk  # <-- Tkinter import
 
 
-def process_running(name: str):
-    """
-    Check if process with provided name is already running
-    """
+def process_running(name: str) -> bool:
+    """Check if a process with the given name is already running."""
     for proc in psutil.process_iter(["name"]):
         if name == proc.info["name"].lower():
             return True
     return False
 
-def ensure_process_running(cmd: str):
-    """
-    Ensure process is running, if not run
-    """
+
+def ensure_process_running(cmd: str) -> None:
+    """Start a process if it isn’t already running."""
     process_name = os.path.basename(cmd)
     if process_running(process_name):
         return
-
     subprocess.Popen(cmd, shell=True)
 
 
-def load_config(config_file="config.ini"):
+def load_config(config_file: str = "config.ini") -> configparser.ConfigParser:
     if not os.path.exists(config_file):
         raise FileNotFoundError(f"Configuration file not found: {config_file}")
 
     config = configparser.ConfigParser()
     config.read(config_file)
 
-    # Validate required sections and keys
+    # Validate config
     required = {
         "DEFAULT": ["ObsPath"],
         "connection": ["host", "port", "password", "timeout"],
@@ -72,9 +61,7 @@ class ObsRecord:
         """
         Initialize OBS recording class
         """
-
         ensure_process_running(config["DEFAULT"]["ObsPath"])
-
         self.CONNECTION = config["connection"]
         self.TIMEOUT = float(self.CONNECTION["timeout"])
         self.client = self.get_client()
@@ -107,47 +94,59 @@ class ObsRecord:
         self.client.set_profile_parameter(
             "Output", "FilenameFormatting", filename
         )
-
         self.client.start_record()
 
 
-class ParametresForm(QWidget):
+# ---------------------------------------------------------------------------
+
+
+class ParametresForm:
+    """
+    Simple Tkinter form that asks for a filename and starts recording.
+    """
+
     def __init__(self, config: configparser.ConfigParser):
-        super().__init__()
         self.config = config
-        self.init_ui()
+        self.root = tk.Tk()
+        self.root.title("Get Filename")
 
-    def init_ui(self):
-        layout = QVBoxLayout()
-
-        self.label = QLabel(
-            "Enter filename or browse (press Enter to confirm):"
+        # Label
+        self.label = tk.Label(
+            self.root, text="Enter filename or browse (press Enter to confirm):"
         )
-        self.input = QLineEdit()
-        self.input.returnPressed.connect(self.save_and_close)
+        self.label.pack(padx=10, pady=(10, 5))
 
-        layout.addWidget(self.label)
-        layout.addWidget(self.input)
+        # Entry field
+        self.input = tk.Entry(self.root, width=50)
+        self.input.pack(padx=10, pady=(0, 10))
+        self.input.bind("<Return>", self._on_enter)
 
-        self.setLayout(layout)
-        self.setWindowTitle("Get Filename")
-        self.show()
+        # Make the entry field the active widget
+        self.input.focus_set()
 
-        # Run OBS
+        # Create OBS client
         self.obs = ObsRecord(self.config)
-        self.activateWindow()
 
-    def save_and_close(self):
-        filename = self.input.text()
-        self.obs.record(filename)
-        self.close()
+    def _on_enter(self, event=None):
+        """Called when the user presses <Return> in the entry field."""
+        filename = self.input.get().strip()
+        if filename:
+            self.obs.record(filename)
+            self.root.destroy()
 
+    def mainloop(self):
+        """Start the Tkinter main loop."""
+        self.root.mainloop()
+
+
+# ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
 
     config = load_config()
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", default="record")
     args = parser.parse_args()
@@ -166,17 +165,18 @@ if __name__ == "__main__":
                 password=CONNECTION["password"],
                 timeout=TIMEOUT,
             )
-
             record_status = client.get_record_status()
             if record_status.output_active:
                 response = client.stop_record()
                 if response.output_path:
-                    sleep(PLAY_DELAY) # give time for file to save properly
-                    subprocess.Popen(f"{PLAYER} {response.output_path}", shell=True)
+                    sleep(PLAY_DELAY)  # give time for file to save properly
+                    subprocess.Popen(
+                        f"{PLAYER} {response.output_path}", shell=True
+                    )
                     logger.info(f"{PLAYER} {response.output_path}")
         except ConnectionRefusedError:
             sys.exit()
     else:
-        app = QApplication(sys.argv)
         form = ParametresForm(config)
-        sys.exit(app.exec())
+        form.mainloop()
+        sys.exit(0)
