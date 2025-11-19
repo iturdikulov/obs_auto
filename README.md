@@ -8,13 +8,6 @@ record short clips and want to streamline their workflow.
 
 This script simplify process of settings filenames per recording by:
 
-- Providing a simple GUI to input a filename before starting a recording.
-- Use OBS Websocket to auto start recording after input filename.
-- Ensuring OBS Studio is running before attempting to connect.
-- Automatically stopping the recording via a hotkey.
-- Immediately opening the recorded video file with a configured media player
-  after stopping.
-
 ## Features
 
 - **Hotkey-driven recording:** Start and stop recordings with global hotkeys.
@@ -22,8 +15,7 @@ This script simplify process of settings filenames per recording by:
   recording.
 - **Automatic playback:** Instantly opens the recorded video after stopping.
 - **OBS Studio integration:** Uses `obs-websocket` for seamless control.
-- **Configurable:** Easily set OBS path, player path, connection details, and
-  more via `config.ini`.
+- **Configurable:** Configurable paths for OBS and media player, and `obs-websocket` connection details via `config.ini`.
 
 ## Quickstart
 
@@ -54,7 +46,7 @@ source .venv/bin/activate
 uv pip install -e .
 ```
 
-If you don't use `uv`, you can try to use `pip` (but this method may not work):
+If you don't use `uv`, you can try to use `pip`:
 
 ```bash
 python -m venv .venv
