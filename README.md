@@ -4,6 +4,8 @@ A Python script to automate OBS Studio recording, allowing for quick,
 hotkey-driven screen recordings. This tool is designed for users who frequently
 record short clips and want to streamline their workflow.
 
+[demo_obs_auto.webm](https://github.com/user-attachments/assets/9d741310-9f6f-46cf-b488-17f3b5302341)
+
 ## Why this tool is required
 
 This script simplifies the process of settings filenames per recording.
