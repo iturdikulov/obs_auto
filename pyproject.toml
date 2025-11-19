@@ -1,0 +1,37 @@
+[project]
+name = "obs_auto"
+version = "0.0.1"
+description = "OBS recording automation"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "obsws-python>=1.8.0",
+    "pyqt6>=6.9.1",
+]
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = [
+    "-v"
+]
+log_cli = true
+log_cli_level = "INFO"
+markers = [
+    "messaging: marks tests as messaging tests",
+]
+
+[tool.basedpyright]
+# many settings are not enabled even in strict mode, which is why basedpyright
+# includes an "all" option you can then decide which rules you want to disable
+typeCheckingMode = "standard"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.1",
+]
