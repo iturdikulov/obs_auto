@@ -97,6 +97,6 @@ with your configured media player.
 You can bind these commands to global hotkeys in your desktop environment's
 settings.
 
-**Example for "Start Recording":** `PATH_TO_PROJECT/obs_record.py`, hotkey: `Meta + R`
+**Example for "Start Recording":** `cd PATH_TO_PROJECT && ./obs_record.py`, hotkey: `Meta + R`
 
-**Example for "Stop Recording":** `PATH_TO_PROJECT/obs_record.py --mode stop`, hotkey: `Meta + Shift + R`
+**Example for "Stop Recording":** `cd PATH_TO_PROJECT && ./obs_record.py --mode=stop`, hotkey: `Meta + Shift + R`
