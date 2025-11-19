@@ -11,6 +11,7 @@ import logging
 import configparser
 import sys
 from time import sleep, time
+from tkinter.font import Font
 import psutil
 
 import obsws_python as obs
@@ -109,15 +110,18 @@ class ParametresForm:
         self.config = config
         self.root = tk.Tk()
         self.root.title("Get Filename")
+        font = Font(size=int(config["DEFAULT"]["FontSize"]))
 
         # Label
         self.label = tk.Label(
-            self.root, text="Enter filename or browse (press Enter to confirm):"
+            self.root,
+            text="Enter filename or browse (press Enter to confirm):",
+            font=font,
         )
         self.label.pack(padx=10, pady=(10, 5))
 
         # Entry field
-        self.input = tk.Entry(self.root, width=50)
+        self.input = tk.Entry(self.root, width=50, font=font)
         self.input.pack(padx=10, pady=(0, 10))
         self.input.bind("<Return>", self._on_enter)
 
