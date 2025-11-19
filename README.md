@@ -6,7 +6,7 @@ record short clips and want to streamline their workflow.
 
 ## Why this tool is required
 
-This script simplify process of settings filenames per recording by:
+This script simplify process of settings filenames per recording by.
 
 ## Features
 
