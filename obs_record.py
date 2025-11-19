@@ -15,7 +15,7 @@ from tkinter.font import Font
 import psutil
 
 import obsws_python as obs
-import tkinter as tk  # <-- Tkinter import
+import tkinter as tk
 
 
 def process_running(name: str) -> bool:
@@ -35,11 +35,13 @@ def ensure_process_running(cmd: str) -> None:
 
 
 def load_config(config_file: str = "config.ini") -> configparser.ConfigParser:
-    if not os.path.exists(config_file):
+    script_path = os.path.dirname(os.path.abspath(__file__))
+    config_file_path = os.path.join(script_path, config_file)
+    if not os.path.exists(config_file_path):
         raise FileNotFoundError(f"Configuration file not found: {config_file}")
 
     config = configparser.ConfigParser()
-    config.read(config_file)
+    config.read(config_file_path)
 
     # Validate config
     required = {
