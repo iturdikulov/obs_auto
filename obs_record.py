@@ -19,7 +19,9 @@ import tkinter as tk
 
 
 def process_running(name: str) -> bool:
-    """Check if a process with the given name is already running."""
+    """
+    Check if a process with the given name is already running.
+    """
     for proc in psutil.process_iter(["name"]):
         if name == proc.info["name"].lower():
             return True
@@ -27,7 +29,9 @@ def process_running(name: str) -> bool:
 
 
 def ensure_process_running(cmd: str) -> None:
-    """Start a process if it isn’t already running."""
+    """
+    Start a process if it isn’t already running.
+    """
     process_name = os.path.basename(cmd)
     if process_running(process_name):
         return
@@ -35,6 +39,9 @@ def ensure_process_running(cmd: str) -> None:
 
 
 def load_config(config_file: str = "config.ini") -> configparser.ConfigParser:
+    """
+    Load the configuration from the specified file.
+    """
     script_path = os.path.dirname(os.path.abspath(__file__))
     config_file_path = os.path.join(script_path, config_file)
     if not os.path.exists(config_file_path):
@@ -62,7 +69,7 @@ def load_config(config_file: str = "config.ini") -> configparser.ConfigParser:
 class ObsRecord:
     def __init__(self, config: configparser.RawConfigParser):
         """
-        Initialize OBS recording class
+        Initialize OBS recording class.
         """
         ensure_process_running(config["DEFAULT"]["ObsPath"])
         self.CONNECTION = config["connection"]
@@ -70,6 +77,9 @@ class ObsRecord:
         self.client = self.get_client()
 
     def get_client(self):
+        """
+        Initialize OBS client with connecting to websocket.
+        """
         # In some reason timeout not working correctly if OBS isn't running
         # so let's implement it manually
         start = time()
@@ -91,7 +101,7 @@ class ObsRecord:
 
     def record(self, filename: str):
         """
-        Start recording with provided filename
+        Start recording with provided filename.
         """
 
         self.client.set_profile_parameter(
@@ -105,10 +115,13 @@ class ObsRecord:
 
 class ParametresForm:
     """
-    Simple Tkinter form that asks for a filename and starts recording.
+    Simple tkinter form that asks for a filename and starts recording.
     """
 
-    def __init__(self, config: configparser.ConfigParser):
+    def __init__(self, config: configparser.ConfigParser, obs: ObsRecord):
+        """
+        Initialize form and obs.
+        """
         self.config = config
         self.root = tk.Tk()
         self.root.title("Get Filename")
@@ -117,7 +130,7 @@ class ParametresForm:
         # Label
         self.label = tk.Label(
             self.root,
-            text="Enter filename or browse (press Enter to confirm):",
+            text="Enter filename (press Enter to confirm):",
             font=font,
         )
         self.label.pack(padx=10, pady=(10, 5))
@@ -134,7 +147,9 @@ class ParametresForm:
         self.obs = ObsRecord(self.config)
 
     def _on_enter(self, event=None):
-        """Called when the user presses <Return> in the entry field."""
+        """
+        Called when the user presses <Return> in the entry field.
+        """
         filename = self.input.get().strip()
         if filename:
             self.obs.record(filename)
