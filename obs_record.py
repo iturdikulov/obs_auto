@@ -142,9 +142,7 @@ class ParametresForm:
 
         # Make the entry field the active widget
         self.input.focus_set()
-
-        # Create OBS client
-        self.obs = ObsRecord(self.config)
+        self.root.mainloop()
 
     def _on_enter(self, event=None):
         """
@@ -154,10 +152,6 @@ class ParametresForm:
         if filename:
             self.obs.record(filename)
             self.root.destroy()
-
-    def mainloop(self):
-        """Start the Tkinter main loop."""
-        self.root.mainloop()
 
 
 # ---------------------------------------------------------------------------
@@ -198,6 +192,7 @@ if __name__ == "__main__":
         except ConnectionRefusedError:
             sys.exit()
     else:
-        form = ParametresForm(config)
-        form.mainloop()
+        # Create OBS client
+        obs = ObsRecord(config)
+        form = ParametresForm(config, obs)
         sys.exit(0)
