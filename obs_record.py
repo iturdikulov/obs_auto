@@ -123,6 +123,8 @@ class ParametresForm:
         Initialize form and obs.
         """
         self.config = config
+        self.obs = obs
+
         self.root = tk.Tk()
         self.root.title("Get Filename")
         font = Font(size=int(config["DEFAULT"]["FontSize"]))
